@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Тренировочный блок
+{% endblock %}
+
+
+{% block body %}
+<h1>Тренировочный блок</h1>
+    <p><a
+    href="{{ url_for('test') }}">Тестовая часть</a></p>
+    <p><a
+    href="{{ url_for('writing') }}">Письменная часть</a></p>
+    <p><a
+    href="{{ url_for('speaking') }}">Разговорная часть</a></p>
+{% endblock %}
+
+
