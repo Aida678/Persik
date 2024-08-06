@@ -1,33 +1,17 @@
-from flask import Flask, render_template
+from flask import Flask, send_from_directory, render_template
+import os
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder='react-frontend/build', template_folder='templates')
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return send_from_directory(app.static_folder, 'index.html')
 
-
-@app.route('/training')
-def training():
-    return render_template("training.html")
-
-
-@app.route('/test')
-def test():
-    return render_template("test.html")
-
-
-@app.route('/writing')
-def writing():
-    return render_template("writing.html")
-
-
-@app.route('/speaking')
-def speaking():
-    return render_template("speaking.html")
-
+@app.route('/<path:path>')
+def static_proxy(path):
+    file_name = path.split('/')[-1]
+    dir_name = os.path.join(app.static_folder, '/'.join(path.split('/')[:-1]))
+    return send_from_directory(dir_name, file_name)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
