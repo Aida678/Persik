@@ -19,7 +19,9 @@ function Login() {
     });
 
     if (response.ok) {
-      navigate('/profile');
+      const data = await response.json();
+      localStorage.setItem('token', data.access_token);
+      window.location.assign('/'); // Обновление страницы после входа
     } else {
       alert('Invalid credentials');
     }
@@ -27,11 +29,11 @@ function Login() {
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <h2>Вход</h2>
       <form onSubmit={handleSubmit}>
         <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
         <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Login</button>
+        <button type="submit">Войти</button>
       </form>
     </div>
   );

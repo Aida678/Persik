@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 
 function Header() {
+  const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await fetch('/logout');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          setLoggedIn(true);
+        } else {
+          localStorage.removeItem('token');
+          setLoggedIn(false);
+        }
+      });
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setLoggedIn(false);
     navigate('/');
   };
 
@@ -18,19 +39,7 @@ function Header() {
           <ul>
             <li><Link to="/">Главная</Link></li>
             <li><Link to="/training">Тренировочный блок</Link></li>
-            <li><Link to="/test1">Тест 1</Link></li>
-            <li><Link to="/test2">Тест 2</Link></li>
-            {document.cookie.includes('session=') ? (
-              <>
-                <li><Link to="/profile">Профиль</Link></li>
-                <li><button onClick={handleLogout} className="logout-button">Выйти</button></li>
-              </>
-            ) : (
-              <>
-                <li><Link to="/register">Регистрация</Link></li>
-                <li><Link to="/login">Вход</Link></li>
-              </>
-            )}
+            <li><Link to="/profile">Профиль</Link></li>
           </ul>
         </nav>
       </div>

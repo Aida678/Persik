@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
 
 function Profile() {
@@ -7,7 +7,13 @@ function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/profile')
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -15,25 +21,35 @@ function Profile() {
         throw new Error('Not authenticated');
       })
       .then(data => setUser(data))
-      .catch(() => navigate('/login'));
-  }, [navigate]);
+      .catch(() => setUser(null));
+    }
+  }, []);
 
-  const handleLogout = async () => {
-    await fetch('/logout');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
     navigate('/');
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <div className="auth-container">
+        <h2>Добро пожаловать!</h2>
+        <p>Пожалуйста, войдите в аккаунт или зарегистрируйтесь, чтобы получить доступ к профилю и тренировочному блоку.</p>
+        <div>
+          <Link to="/login"><button className="auth-button">Вход</button></Link>
+          <Link to="/register"><button className="auth-button">Регистрация</button></Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="auth-container">
-      <h2>Profile</h2>
-      <p>First Name: {user.first_name}</p>
-      <p>Last Name: {user.last_name}</p>
+      <h2>Профиль</h2>
+      <p>Имя: {user.first_name}</p>
+      <p>Фамилия: {user.last_name}</p>
       <p>Email: {user.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout}>Выйти</button>
     </div>
   );
 }

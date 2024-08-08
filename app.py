@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 
 from flask import Flask, send_from_directory, render_template, jsonify, request
 import os
@@ -6,6 +7,7 @@ import os
 import requests
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 
@@ -17,12 +19,16 @@ app = Flask(__name__, static_folder='react-frontend/build')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=20)
+
 
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+jwt = JWTManager(app)
+# login_manager = LoginManager(app)
+# login_manager.login_view = 'login'
 
 # @app.route('/<path:path>')
 # def static_proxy(path):
@@ -37,13 +43,6 @@ class User(UserMixin, db.Model):
     last_name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
 
 
 @app.route('/')
@@ -67,33 +66,32 @@ def serve_react_app(path):
 def register():
     data = request.get_json()
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    print(data)
     new_user = User(first_name=data['first_name'], last_name=data['last_name'], email=data['email'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
-    login_user(new_user)
-    return jsonify({'message': 'User registered successfully'})
+    access_token = create_access_token(identity=new_user.id)
+    return jsonify(access_token=access_token)
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
     if user and bcrypt.check_password_hash(user.password, data['password']):
-        login_user(user)
-        return jsonify({'message': 'Logged in successfully'})
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token)
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return jsonify({'message': 'Logged out successfully'})
 
-
-@app.route('/profile')
-@login_required
+@app.route('/profile', methods=['GET'])
+@jwt_required()
 def profile():
-    return jsonify({'first_name': current_user.first_name, 'last_name': current_user.last_name, 'email': current_user.email})
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    return jsonify({
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email
+    })
 
 # @app.route('/<path:path>')
 # def catch_all(path):
@@ -141,7 +139,7 @@ def profile():
 #
 #     return jsonify(response.choices[0].text.strip())
 @app.route('/evaluate_essay', methods=['POST'])
-@login_required
+@jwt_required()
 def evaluate_essay():
     data = request.get_json()
     essay = data['essay']
@@ -170,7 +168,7 @@ def evaluate_essay():
 
 
 @app.route('/get_questions', methods=['GET'])
-@login_required
+@jwt_required()
 def get_questions():
     with open('questions.json', 'r', encoding='utf-8') as f:
         questions = json.load(f)
