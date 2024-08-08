@@ -1,39 +1,63 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Auth.css';
 
 function Register() {
-  const [form, setForm] = useState({ first_name: '', last_name: '', email: '', password: '' });
-  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleRegister = async (event) => {
+    event.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
     const response = await fetch('/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password, email })
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      navigate('/profile');
+      alert('Регистрация прошла успешно!');
+      // Перенаправление или другая логика
     } else {
-      alert('Error registering user');
+      alert(`Ошибка регистрации: ${data.error}`);
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="first_name" placeholder="First Name" onChange={handleChange} required />
-        <input type="text" name="last_name" placeholder="Last Name" onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Register</button>
+    <div className="register-container">
+      <h2>Регистрация</h2>
+      <form onSubmit={handleRegister}>
+        <div>
+          <label>Имя пользователя:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Пароль:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Зарегистрироваться</button>
       </form>
     </div>
   );
