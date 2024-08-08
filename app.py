@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, send_from_directory, render_template, jsonify, request
 import os
 # import openai  # Предполагаем, что используем OpenAI API
@@ -109,9 +111,16 @@ def evaluate_essay():
         return jsonify({"error": "Something went wrong"}), 500
 
 
-@app.route('/<path:path>')
-def static_proxy(path):
-    return send_from_directory(app.static_folder, path)
+@app.route('/get_questions', methods=['GET'])
+def get_questions():
+    with open('questions.json', 'r', encoding='utf-8') as f:
+        questions = json.load(f)
+    return jsonify(questions)
+
+
+# @app.route('/<path:path>')
+# def static_proxy(path):
+#     return send_from_directory(app.static_folder, path)
 
 
 if __name__ == '__main__':
