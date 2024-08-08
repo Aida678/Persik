@@ -4,13 +4,25 @@ from flask import Flask, send_from_directory, render_template, jsonify, request
 import os
 # import openai  # Предполагаем, что используем OpenAI API
 import requests
+from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_sqlalchemy import SQLAlchemy
 
 # Загрузка переменных окружения из файла .env
 load_dotenv()
 
 # app = Flask(__name__, static_folder='react-frontend/build', template_folder='templates')
 app = Flask(__name__, static_folder='react-frontend/build')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 # @app.route('/<path:path>')
 # def static_proxy(path):
@@ -19,6 +31,19 @@ app = Flask(__name__, static_folder='react-frontend/build')
 #         return send_from_directory(app.static_folder, path)
 #     else:
 #         return send_from_directory(app.static_folder, 'index.html')
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(150), nullable=False)
+    last_name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 
 @app.route('/')
@@ -37,6 +62,38 @@ def serve_react_app(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    print(data)
+    new_user = User(first_name=data['first_name'], last_name=data['last_name'], email=data['email'], password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    login_user(new_user)
+    return jsonify({'message': 'User registered successfully'})
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter_by(email=data['email']).first()
+    if user and bcrypt.check_password_hash(user.password, data['password']):
+        login_user(user)
+        return jsonify({'message': 'Logged in successfully'})
+    return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'Logged out successfully'})
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return jsonify({'first_name': current_user.first_name, 'last_name': current_user.last_name, 'email': current_user.email})
 
 # @app.route('/<path:path>')
 # def catch_all(path):
@@ -84,6 +141,7 @@ def serve_react_app(path):
 #
 #     return jsonify(response.choices[0].text.strip())
 @app.route('/evaluate_essay', methods=['POST'])
+@login_required
 def evaluate_essay():
     data = request.get_json()
     essay = data['essay']
@@ -112,6 +170,7 @@ def evaluate_essay():
 
 
 @app.route('/get_questions', methods=['GET'])
+@login_required
 def get_questions():
     with open('questions.json', 'r', encoding='utf-8') as f:
         questions = json.load(f)

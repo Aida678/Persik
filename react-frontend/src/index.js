@@ -9,6 +9,9 @@ import Test1 from './Test1';
 import Test2 from './Test2';
 import Writing from './Writing';
 import Speaking from './Speaking';
+import Register from './Register';
+import Login from './Login';
+import Profile from './Profile';
 
 function Main() {
   return (
@@ -16,6 +19,9 @@ function Main() {
       <Header />
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/training" element={<Training />} />
         <Route path="/test1" element={<Test1 />} />
         <Route path="/test2" element={<Test2 />} />
@@ -23,7 +29,6 @@ function Main() {
         <Route path="/speaking" element={<Speaking />} />
       </Routes>
     </Router>
-
   );
 }
 
