@@ -34,7 +34,7 @@ function Header() {
   return (
     <header className="header">
       <div className="container">
-        <h1 className="logo">Название проекта</h1>
+        <h1 className="logo">Aida Project</h1>
         <nav className="nav">
           <ul>
             <li><Link to="/">Главная</Link></li>
