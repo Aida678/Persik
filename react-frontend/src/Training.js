@@ -29,7 +29,8 @@ function Training() {
     return (
       <div className="training-container">
         <h2>Тренировочный блок</h2>
-        <p>Этот блок доступен только после регистрации. Пожалуйста, войдите в систему или зарегистрируйтесь.</p>
+        <p>Этот блок доступен только после регистрации.</p>
+        <p>Пожалуйста, войдите в систему или зарегистрируйтесь.</p>
         <div>
           <Link to="/login"><button className="auth-button">Вход</button></Link>
           <Link to="/register"><button className="auth-button">Регистрация</button></Link>

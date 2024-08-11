@@ -10,6 +10,7 @@ function App() {
                   <li><a href="#chapter1">Глава 1</a></li>
                   <li><a href="#chapter2">Глава 2</a></li>
                   <li><a href="#chapter3">Глава 3</a></li>
+                  <li><a href="#chapter4">Глава 4</a></li>
               </ul>
           </div>
           <section id="chapter1">
