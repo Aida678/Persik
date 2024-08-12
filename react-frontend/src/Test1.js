@@ -45,20 +45,20 @@ function Test1() {
   if (currentWordIndex >= words.length) {
     return (
       <div className="test1-container">
-        <h2>Тестовая часть 1</h2>
-        <p>Ваш результат: {score} из {words.length}</p>
+        <h2 style={{fontSize: "2.5rem"}}>Тестовая часть 1</h2>
+        <p style={{fontSize: "2.5rem"}}>Ваш результат: {score} из {words.length}</p>
       </div>
     );
   }
 
   return (
     <div className="test1-container">
-      <h2>Тестовая часть 1</h2>
-      <p>Есть ли такое слово?</p>
+      <h2 style={{fontSize: "2.5rem"}}>Тестовая часть 1</h2>
+      <p  style={{fontSize: "1.5rem"}}>Есть ли такое слово?</p>
       <p className="word">{words[currentWordIndex].word}</p>
       <div className="buttons">
-        <button onClick={() => handleAnswer(true)}>Да</button>
-        <button onClick={() => handleAnswer(false)}>Нет</button>
+        <button id="ybtn" onClick={() => handleAnswer(true)}>Да</button>
+        <button id="nbtn" onClick={() => handleAnswer(false)}>Нет</button>
       </div>
       <p>Оставшееся время: {timeLeft} секунд</p>
     </div>

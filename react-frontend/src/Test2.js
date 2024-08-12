@@ -28,8 +28,8 @@ function Test2() {
   if (currentQuestionIndex >= questions.length) {
     return (
       <div className="test2-container">
-        <h2>Тестовая часть 2</h2>
-        <p>Ваш результат: {score} из {questions.length}</p>
+        <h2 style={{fontSize: "2.5rem"}}>Тестовая часть 2</h2>
+        <p style={{fontSize: "2.5rem"}}>Ваш результат: {score} из {questions.length}</p>
       </div>
     );
   }
@@ -38,8 +38,8 @@ function Test2() {
 
   return (
     <div className="test2-container">
-      <h2>Тестовая часть 2</h2>
-      <p>{currentQuestion.question}</p>
+      <h2 style={{fontSize: "2.5rem"}}>Тестовая часть 2</h2>
+      <p style={{fontSize: "2.5rem"}}>{currentQuestion.question}</p>
       <div className="answers">
         {currentQuestion.answers.map((answer, index) => (
           <button key={index} onClick={() => handleAnswer(index)}>
