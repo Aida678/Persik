@@ -17,6 +17,20 @@
 
 button {
   padding: 10px 20px;
-  font-size: 16px;
   cursor: pointer;
+  border-radius: 2rem;
+  border: 0;
+  color: white;
+}
+
+#ybtn {
+  background: #8dcc8d;
+  font-size: 2rem;
+  padding: 1rem 2rem;
+}
+
+#nbtn {
+  background: #be5959;
+  font-size: 2rem;
+  padding: 1rem 2rem;
 }

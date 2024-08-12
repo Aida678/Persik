@@ -1,0 +1,21 @@
+.test2-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+button {
+  cursor: pointer;
+  border-radius: 2rem;
+  border: 0;
+  color: white;
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  background: #FF7E5FFF;
+}

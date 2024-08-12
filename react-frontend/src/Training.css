@@ -1,0 +1,68 @@
+.training-container, .auth-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.auth-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#training-wrapper {
+    min-width: 45vw;
+    position: relative;
+    padding: 10px 0 10px 20px;
+    margin: 80px;
+    border-left: 0.7rem solid #FF7E5FFF;
+    border-radius: 2rem;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.12) 0 0 20px 0px;
+}
+
+ol {
+    list-style: none;
+    counter-reset: li;
+    margin: 2rem;
+}
+
+ol li {
+    margin-bottom: 20px;
+    transition: .3s linear;
+}
+
+ol li:last-child {
+    margin-bottom: 0;
+}
+
+ol li:before {
+    counter-increment: li;
+    content: counters(li, "");
+    font-size: 1.4rem;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    display: inline-block;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: .3s linear;
+}
+
+ol li:hover:before {
+    border-color: #FF7E5FFF;
+    color: #FF7E5FFF;
+}
+
+#text-wrapper {
+    min-width: 45vw;
+    position: relative;
+    padding: 20px 20px 20px 40px;
+    margin: 80px;
+    border-left: 0.7rem solid #FF7E5FFF;
+    border-radius: 2rem;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.12) 0 0 20px 0px;
+}
+

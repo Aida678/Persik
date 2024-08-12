@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import './Writing.css';
 
 function Writing() {
   const [essay, setEssay] = useState('');
   const [result, setResult] = useState(null);
+  const [topic, setTopic] = useState('');
+
+  const topics = ['Pollution', 'Nature', 'Internet', 'My family'];
+
+  useEffect(() => {
+    setTopic(topics[Math.floor(Math.random() * topics.length)]);
+  }, []);
 
   const handleChange = (event) => {
     setEssay(event.target.value);
@@ -25,17 +32,16 @@ function Writing() {
 
   return (
     <div className="writing-container">
-      <h2>Письменная часть</h2>
-      <img src="/static/images/writing.jpg" alt="Writing" className="writing-image" />
+      <h2 style={{fontSize: "2.2rem", margin: "1rem"}}>Письменная часть</h2>
+      <h1 style={{fontSize: "1.8rem", margin: "0 0 2rem 0"}}>{topic}</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="essay">Введите ваше эссе:</label>
         <textarea
           id="essay"
           value={essay}
           onChange={handleChange}
           className="essay-input"
           rows="20"
-          cols="80"
+          cols="100"
           placeholder="Начните писать здесь..."
         ></textarea>
         <button type="submit" className="submit-button">Сохранить эссе</button>
