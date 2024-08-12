@@ -9,13 +9,13 @@ function Test2() {
   useEffect(() => {
     fetch('/get_questions')
       .then(response => response.json())
-      .then(data => setQuestions(data));
+      .then(data => setQuestions(data))
+      .catch(error => console.error('Error fetching questions:', error));
   }, []);
 
-  const handleAnswer = (answerIndex) => {
-    // Обновите логику для проверки правильного ответа
-    // Здесь мы предполагаем, что правильный ответ всегда под индексом 2
-    if (answerIndex === 2) {
+  const handleAnswer = (selectedAnswer) => {
+    const correctAnswer = questions[currentQuestionIndex]?.answers[2]; // Добавлена проверка на наличие данных
+    if (selectedAnswer === correctAnswer) {
       setScore(score + 1);
     }
     setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -36,13 +36,18 @@ function Test2() {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  // Добавлена проверка на наличие текущего вопроса
+  if (!currentQuestion || !currentQuestion.question) {
+    return <div>Loading question...</div>;
+  }
+
   return (
     <div className="test2-container">
-      <h2 style={{fontSize: "2.5rem"}}>Тестовая часть 2</h2>
-      <p style={{fontSize: "2.5rem"}}>{currentQuestion.question}</p>
+      <h2 style={{fontSize: "2.5rem"}}>{currentQuestion.question[0]}</h2>
+      <p style={{fontSize: "2.5rem"}}>{currentQuestion.question[1]}</p>
       <div className="answers">
         {currentQuestion.answers.map((answer, index) => (
-          <button key={index} onClick={() => handleAnswer(index)}>
+          <button key={index} onClick={() => handleAnswer(answer)}>
             {answer}
           </button>
         ))}

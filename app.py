@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_cors import CORS
 # Загрузка переменных окружения из файла .env
 load_dotenv()
 
@@ -23,7 +23,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=20)
 
 
-
+CORS(app)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
